@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Deals and Tech News</title>
+    <style>
+        /* Reset default browser styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"],
+        button[type="button"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover,
+        button[type="button"]:hover {
+            background-color: #0056b3;
+        }
+
+        fieldset {
+            margin-bottom: 20px;
+        }
+
+        legend {
+            font-weight: bold;
+        }
+
+        .request {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        #clearButton {
+            display: block;
+            margin: 20px auto;
+        }
+
+        footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        footer p {
+            margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Request Deals and Tech News</h1>
+    </header>
+    <main>
+        <form id="requestForm" novalidate>
+            <label for="requesterName">Your Name:</label><br>
+            <input type="text" id="requesterName" name="requesterName" pattern="^[A-Za-z\s]+$" title="Please enter letters and symbols only" required><br><br>
+
+            <label for="dealName">Deal Name & Description (e.g., Product Name):</label><br>
+            <input type="text" id="dealName" name="dealName" required><br><br>
+
+            <label for="priceRange">Price Range (in Indian Rupees):</label><br>
+            <input type="text" id="priceRange" name="priceRange" pattern="^[0-9₹ -]+$" title="Please enter numbers and symbols only" required><br><br>
+
+            <fieldset>
+                <legend>Deal Categories:</legend>
+                <label><input type="checkbox" name="categoriesDeals" value="Electronics">Electronics</label><br>
+                <label><input type="checkbox" name="categoriesDeals" value="Fashion">Fashion</label><br>
+                <label><input type="checkbox" name="categoriesDeals" value="Home & Garden">Home & Garden</label><br>
+            </fieldset>
+
+            <fieldset>
+                <legend>Tech News Categories:</legend>
+                <label><input type="checkbox" name="categoriesTechNews" value="Hardware">Hardware</label><br>
+                <label><input type="checkbox" name="categoriesTechNews" value="Software">Software</label><br>
+                <label><input type="checkbox" name="categoriesTechNews" value="Gadgets">Gadgets</label><br>
+            </fieldset>
+            
+            <button type="submit">Submit Request</button>
+        </form>
+
+        <div id="requestedData"></div>
+
+        <button id="clearButton">Clear Requests</button>
+    </main>
+
+    <footer>
+        <p>Designed and built by Your Name &copy; 2024. All rights reserved.</p>
+        <p>This website is protected by copyright law. Unauthorized use or modification of the code is prohibited.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('requestForm');
+            const requestedData = document.getElementById('requestedData');
+            const clearButton = document.getElementById('clearButton');
+
+            // Load previously stored requests on page load
+            loadRequests();
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Collect request data from form fields
+                const requesterName = document.getElementById('requesterName').value;
+                const dealName = document.getElementById('dealName').value;
+                const priceRange = document.getElementById('priceRange').value;
+                const categoriesDeals = Array.from(document.querySelectorAll('input[name="categoriesDeals"]:checked')).map(input => input.value);
+                const categoriesTechNews = Array.from(document.querySelectorAll('input[name="categoriesTechNews"]:checked')).map(input => input.value);
+
+                // Create an object with the collected data
+                const request = {
+                    requesterName,
+                    dealName,
+                    priceRange,
+                    categoriesDeals,
+                    categoriesTechNews
+                };
+
+                // Store the request data
+                storeRequest(request);
+
+                // Clear the form fields
+                form.reset();
+            });
+
+            // Clear stored requests
+            clearButton.addEventListener('click', function () {
+                clearRequests();
+            });
+
+            function storeRequest(request) {
+                const gistData = {
+                    description: 'Deal and Tech News Requests',
+                    public: true,
+                    files: {
+                        'requests.json': {
+                            content: JSON.stringify(request)
+                        }
+                    }
+                };
+
+                fetch('https://api.github.com/gists', {
+                    method: 'POST',
+                    body: JSON.stringify(gistData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Request stored in Gist:', data);
+                    // Now, display the newly stored request
+                    displayRequest(request);
+                })
+                .catch(error => console.error('Error storing request:', error));
+            }
+
+            function loadRequests() {
+                fetch('https://api.github.com/gists/1b7e2b55a445c92780a2bc758c3001a0')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.files && data.files['requests.json']) {
+                        const requests = JSON.parse(data.files['requests.json'].content);
+                        console.log('Requests:', requests);
+                        requests.forEach(request => displayRequest(request));
+                    }
+                })
+                .catch(error => console.error('Error loading requests:', error));
+            }
+
+            function clearRequests() {
+                const gistData = {
+                    description: 'Deal and Tech News Requests',
+                    public: true,
+                    files: {
+                        'requests.json': {
+                            content: JSON.stringify([])
+                        }
+                    }
+                };
+
+                fetch('https://api.github.com/gists/1b7e2b55a445c92780a2bc758c3001a0', {
+                    method: 'PATCH',
+                    body: JSON.stringify(gistData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    requestedData.innerHTML = '';
+                    console.log('Requests cleared');
+                })
+                .catch(error => console.error('Error clearing requests:', error));
+            }
+
+            function displayRequest(request) {
+                requestedData.innerHTML += `
+                    <div class="request">
+                        <p><strong>Your Name:</strong> ${request.requesterName}</p>
+                        <p><strong>Deal Name:</strong> ${request.dealName}</p>
+                        <p><strong>Price Range:</strong> ${request.priceRange}</p>
+                        <p><strong>Categories (Deals):</strong> ${request.categoriesDeals.join(', ')}</p>
+                        <p><strong>Categories (Tech News):</strong> ${request.categoriesTechNews.join(', ')}</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
