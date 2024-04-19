@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Deals and Tech News</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* Reset default browser styles */
         * {
@@ -22,7 +23,7 @@
         }
 
         header {
-            background-color: #007bff;
+            background-color:  #73605B;
             color: #fff;
             padding: 20px;
             text-align: center;
@@ -43,11 +44,26 @@
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        form.submitted {
+            animation: submitAnimation 0.5s;
+        }
+
+        @keyframes submitAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         label {
             display: block;
             margin-bottom: 5px;
+        }
+
+        label i {
+            margin-right: 5px;
         }
 
         input[type="text"],
@@ -67,6 +83,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: transform 0.3s ease-in-out;
         }
 
         button[type="submit"]:hover,
@@ -92,6 +109,17 @@
         #clearButton {
             display: block;
             margin: 20px auto;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #clearButton.clicked {
+            animation: clearButtonAnimation 0.5s;
+        }
+
+        @keyframes clearButtonAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         footer {
@@ -113,27 +141,27 @@
     </header>
     <main>
         <form id="requestForm" novalidate>
-            <label for="requesterName">Your Name:</label><br>
+            <label for="requesterName"><i class="fas fa-user"></i> Your Name:</label><br>
             <input type="text" id="requesterName" name="requesterName" pattern="^[A-Za-z\s]+$" title="Please enter letters and symbols only" required><br><br>
 
-            <label for="dealName">Deal Name & Description (e.g., Product Name):</label><br>
+            <label for="dealName"><i class="fas fa-tag"></i> Deal Name & Description (e.g., Product Name):</label><br>
             <input type="text" id="dealName" name="dealName" required><br><br>
 
-            <label for="priceRange">Price Range (in Indian Rupees):</label><br>
+            <label for="priceRange"><i class="fas fa-money-bill-wave"></i> Price Range (in Indian Rupees):</label><br>
             <input type="text" id="priceRange" name="priceRange" pattern="^[0-9₹ -]+$" title="Please enter numbers and symbols only" required><br><br>
 
             <fieldset>
                 <legend>Deal Categories:</legend>
-                <label><input type="checkbox" name="categoriesDeals" value="Electronics">Electronics</label><br>
-                <label><input type="checkbox" name="categoriesDeals" value="Fashion">Fashion</label><br>
-                <label><input type="checkbox" name="categoriesDeals" value="Home & Garden">Home & Garden</label><br>
+                <label><input type="checkbox" name="categoriesDeals" value="Electronics"><i class="fas fa-laptop"></i> Electronics</label><br>
+                <label><input type="checkbox" name="categoriesDeals" value="Fashion"><i class="fas fa-tshirt"></i> Fashion</label><br>
+                <label><input type="checkbox" name="categoriesDeals" value="Home & Garden"><i class="fas fa-home"></i> Home & Garden</label><br>
             </fieldset>
 
             <fieldset>
                 <legend>Tech News Categories:</legend>
-                <label><input type="checkbox" name="categoriesTechNews" value="Hardware">Hardware</label><br>
-                <label><input type="checkbox" name="categoriesTechNews" value="Software">Software</label><br>
-                <label><input type="checkbox" name="categoriesTechNews" value="Gadgets">Gadgets</label><br>
+                <label><input type="checkbox" name="categoriesTechNews" value="Hardware"><i class="fas fa-microchip"></i> Hardware</label><br>
+                <label><input type="checkbox" name="categoriesTechNews" value="Software"><i class="fas fa-file-code"></i> Software</label><br>
+                <label><input type="checkbox" name="categoriesTechNews" value="Gadgets"><i class="fas fa-mobile-alt"></i> Gadgets</label><br>
             </fieldset>
             
             <button type="submit">Submit Request</button>
@@ -182,10 +210,16 @@
 
                 // Clear the form fields
                 form.reset();
+
+                // Add 'submitted' class to trigger animation
+                form.classList.add('submitted');
             });
 
             // Clear stored requests
             clearButton.addEventListener('click', function () {
+                // Add 'clicked' class to trigger animation
+                clearButton.classList.add('clicked');
+
                 clearRequests();
             });
 
