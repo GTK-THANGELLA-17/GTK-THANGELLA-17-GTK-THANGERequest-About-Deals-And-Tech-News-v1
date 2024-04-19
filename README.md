@@ -2,6 +2,12 @@
 
 This repository contains code for a website where users can request deals and tech news. The website allows users to fill out a form with their preferences and interests regarding deals and tech news, and the submitted data is stored and displayed on the webpage.
 
+## Programming Languages
+- HTML
+- CSS
+- JavaScript
+  
+
 ## Contributors
 
 - [@YourGitHubUsername](https://github.com/GTK-THANGELLA-17) - G.Thangella
